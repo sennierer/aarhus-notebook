@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+
+    {% if form.errors or formset1.errors %}
+        <p style="color: red;">
+            Please correct the error{{ form.errors|pluralize }} {{ formset1.errors|pluralize }}below.
+        </p>
+    {% endif %}
+<form id="form1" enctype="multipart/form-data" action="" method="POST">
+{% csrf_token %}
+	{% load crispy_forms_tags %}
+    <div id="Form4">
+        {% crispy form4 form4.helper %}
+    </div>
+	{% crispy form form.helper %}
+{% for form1 in formset1 %}
+<div class="Formset1">
+	{% crispy form1 helper %}
+</div>
+{% endfor %}
+{{ formset1.management_form }}
+	<div class="form-actions">
+        <input type="submit" name="submit" value="Submit" class="btn btn-primary" id="submit-save">
+	</div>
+</form>
+
+{% endblock %}

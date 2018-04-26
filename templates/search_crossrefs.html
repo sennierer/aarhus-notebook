@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'bootstrap3/layout/help_text_and_errors.html' %}
+<script type="text/javascript">
+function include_crossref(url,id,title){
+$.ajax({
+			url: '/notebook/texts/ajax/crossrefs_include/',
+			type: 'POST',
+			dataType: 'json',
+			data: {
+				url:url,
+				id:id,
+				title:title,
+				csrfmiddlewaretoken: '{{ csrf_token }}'
+			},
+			success: function(res2) {
+				if (res2.error) {
+					$('#include_'+res2.id).html('Import failed');
+					$('#include_'+res2.id).toggleClass('btn-primary btn-danger');
+				} else {
+				$('#include_'+res2.id).html('Included');
+				$('#include_'+res2.id).toggleClass('btn-primary btn-info');
+				$('#include_'+res2.id).attr("onclick","");};
+				console.log(res2.bibtex2);
+				console.log(res2.pages);
+			}
+		});
+}
+</script>
+
+    {% if form.errors %}
+        <p style="color: red;">
+            Please correct the error{{ form.errors|pluralize }} below.
+        </p>
+    {% endif %}
+    <div id="container_big">
+	{% load crispy_forms_tags %}
+	{% crispy form form.helper %}
+
+	{% if result %}
+	<p><b>Search term:&nbsp;</b>'{{ result.query.searchTerms }}'</p>
+	<p><b>Total results:&nbsp;</b>{{ result.totalResults }}</p>
+	<table class="table table-hover">
+	<thead><tr><th>Citation</th><th>Year</th><th>Include</th></tr></thead>
+	{% for x in result.items %}
+		<tr><td>{{ x.fullCitation|safe }}</td><td>{{ x.year }}</td><td>{% if x.exists %}<button type="button" id="include_{{forloop.counter}}" class="btn btn-success btn-xs" onclick="">Title exists in DB</button>{% else %}<button type="button" id="include_{{forloop.counter}}" class="btn btn-primary btn-xs" onclick="include_crossref('{{x.doi}}','{{forloop.counter}}','{{ x.title|escapejs }}')">Include</button>{% endif %}</td></tr>
+	{% endfor %}
+	</table>
+<div class="pagination">
+    <span class="step-links">
+        {% if pagin.prev %}
+            {% if search_term %}
+                 <a href="?page={{ pagin.prev }}&q={{ search_term }}">&lt;&lt;&nbsp;&nbsp;previous</a>
+            {% else %}
+                <a href="?page={{ pagin.prev }}">&lt;&lt;&nbsp;&nbsp;previous</a>
+            {% endif %}
+            
+        {% endif %}
+
+        <span class="current">
+            &nbsp;&nbsp;Page {{ pagin.page }} of {{ pagin.tot_pages }}&nbsp;&nbsp;
+        </span>
+
+        {% if pagin.nxt %}
+            {% if search_term %}
+            <a href="?page={{ pagin.nxt }}&q={{search_term}}">next&nbsp;&nbsp;&gt;&gt;</a>
+            {% else %}
+            <a href="?page={{ pagin.nxt }}">next&nbsp;&nbsp;&gt;&gt;</a>
+            {% endif %}
+        {% endif %}
+    </span>
+</div>
+ <div class="form-inline" id="pageform">
+        <div class="form-group">
+        <div class="input-group" id="inp_group_goToPage">
+            <div class="input-group-addon">Go to page:</div>
+            <input type="text" class="form-control" id="pageToGo">
+            
+        </div>
+        </div>
+        {% if search_term %}
+        <button type="submit" class="btn btn-primary" onclick="gotopage2('{{search_term}}')">Go!</button>
+        {% else %}
+        <button type="submit" class="btn btn-primary" onclick="gotopage2(false)">Go!</button>
+        {% endif %}
+        </div>
+
+
+	{% endif %}
+	</div>
+{% endblock %}

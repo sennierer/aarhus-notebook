@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+    {% if form.errors %}
+        <p style="color: red;">
+            Please correct the error{{ form.errors|pluralize }} below.
+        </p>
+    {% endif %}
+
+    <form action="" method="post" id="forms">
+        <div>
+            {{ form.as_p}}
+        </div>
+        {{ formset1.management_form }}
+    <table id="myFormset1Table" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+    {% for form in formset1.forms %}
+      <tr>
+        <td>{{ form.name }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+    {{ formset2.management_form }}
+    <table id="myFormset2Table" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+    {% for form in formset2.forms %}
+      <tr>
+        <td>{{ form.keyword }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+    </table>   
+    <input type="submit" value="Submit">
+            
+        
+        {% csrf_token %}
+        
+       
+    </form>
+
+{% endblock %}

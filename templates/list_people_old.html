@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>List of People</h3>
+<input type="text" class="form-control" id="live_search" placeholder="Start typing to filter the list">
+<hr>
+<div class="list_1">
+<ul id="list_2">
+	{% for peop in people %}<li><a href="{{ BASE_URL }}/notebook/people/show/{{peop.pk}}">{{peop.first_name}}&nbsp;{{peop.last_name}}</a></li>{% endfor %}
+</ul>	
+</div>
+<script type="text/javascript">
+	
+	$(document).ready(function () {
+/* initially hide list items */
+
+
+/* filter dinosaurs as you type */
+$("#live_search").on("keyup click input", function () {
+if (this.value.length > 0) {
+  $("#list_2 li").hide().filter(function () {
+    return $(this).text().toLowerCase().indexOf($("#live_search").val().toLowerCase()) != -1;
+  }).show();
+}
+else {
+  $("#list_2 li").show();
+}
+});
+
+});
+
+</script>
+
+{% endblock %}

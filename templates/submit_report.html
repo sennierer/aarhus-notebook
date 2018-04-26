@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+
+    {% if form.errors %}
+        <p style="color: red;">
+            Please correct the error{{ form.errors|pluralize }} below.
+        </p>
+    {% endif %}
+    <div id='user_report'>
+    <h4>Suggestions/Bug reports</h4>
+    <p>Please let me know if you encounter any problems with the tool or have any suggestions how to improve it. Please use the form down below for describing your problem/suggestion. If you have screenshots or other additional material please send it to <a href="mailto:m.schloegl@bath.ac.uk">m.schloegl@bath.ac.uk</a></p>
+
+	{% load crispy_forms_tags %}
+	{% crispy form form.helper %}
+	</div>
+	<hr>
+	{% if reports_fin %}
+	<div class="user_report_table">
+	<h5>Implemented reports</h5>
+	<table id="Table1" class="table table-hover">
+	<tr><td><b>User</b></td><td><b>Submitted</b></td><td><b>Implemented</b></td><td><b>Problem</b></td><td><b>Notes</b></td></tr>
+	{% for x in reports_fin %}
+	<tr><td>{{x.user}}</td><td>{{x.date_created}}</td><td>{{x.date_modified}}</td><td>{{x.report}}</td><td>{{x.impl_note}}</td></tr>
+	{% endfor %}
+	</table>
+	</div>
+	<hr>
+	{% endif %}
+	{% if reports %}
+	<div class="user_report_table">
+	<h5>Open reports</h5>
+	<table id="Table1" class="table table-hover">
+	<tr><td><b>User</b></td><td><b>Submitted</b></td><td><b>Problem</b></td></tr>
+	{% for x in reports %}
+	<tr><td>{{x.user}}</td><td>{{x.date_created}}</td><td>{{x.report}}</td></tr>
+	{% endfor %}
+	</table>
+	</div>
+	<hr>
+	{% endif %}
+{% endblock %}

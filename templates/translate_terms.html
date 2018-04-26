@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+
+    {% if form.errors %}
+        <p style="color: red;">
+            Please correct the error{{ form.errors|pluralize }} below.
+        </p>
+    {% endif %}
+
+{% if formset|length > 0 %}
+{% load crispy_forms_tags %}
+{% crispy formset helper %}
+{% else %}<h5>No terms to translate found!</h5>
+{% endif %}
+{% if request.get_full_path|slice:"-4:" != "all/" %}<a class="btn btn-default" href="{{ request.get_full_path }}all/">Edit already finished translations</a>{% endif %}
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if follow %}
+<button type="button" id="triggerFollow" class="btn btn-danger btn-xs" onclick="trigger_follow('person','{{person.pk}}')">Unfollow</button>
+{%else%}
+<button type="button" id="triggerFollow" class="btn btn-primary btn-xs" onclick="trigger_follow('person','{{person.pk}}')">Follow</button>
+{% endif %}
+
+<h4>Person entry</h4>
+<div class="basic_info">
+<table id="Table_basic" class="table table-hover">
+<tr><td><b>Name</b></td><td>{{person.first_name}}&nbsp;{{person.last_name}}</td></tr>
+{% if person.url %}<tr><td><b>Website</b></td><td><a href="{{person.url}}" target="_blank">{{person.url}}</a></td></tr>{% endif %}
+{% if person.profession %}<tr><td><b>Profession</b></td><td>{{person.profession}}</td></tr>{% endif %}
+{% if person.twitter %}<tr><td><b>Twitter</b></td><td>{{person.twitter}}</td></tr>{% endif %}
+{% if person.birth %}<tr><td><b>Date of birth</b></td><td>{{person.birth}}</td></tr>{% endif %}
+{% if person.death %}<tr><td><b>Date of death</b></td><td>{{person.death}}</td></tr>{% endif %}
+</table>
+<a class="btn btn-default" href="/notebook/people/edit/{{person.pk}}">Edit Person</a>
+</div>
+{% if articles %}
+<hr>
+<div class="inst_peop_info">
+<h5>Connections to texts</h5>
+<table class="table table-hover">
+<thead><tr><th>Title</th><th>Type of connection</th><th>Date of publication</th><th>Place of publication</th></tr></thead>
+{% for art in articles %}<tr><td><a href="/notebook/texts/show/{{art.texts.pk}}">{{art.texts.title}}</a></td><td>{{art.get_kind_display}}</td><td>{{art.texts.pubdate}}</td><td>{{art.texts.p_place.place}}</td></tr>{% endfor %}
+</table>
+</div>
+{% endif %}
+{% if institutions %}
+<hr>
+<div class="inst_peop_info">
+<h5>Connections to institutions</h5>
+<table class="table table-hover">
+<thead><tr><th>Institution</th><th>Position</th><th>Time period</th><th>Website institution</th></tr></thead>
+{% for inst in institutions %}<tr><td>{% if inst.institution.name == "UNKNOWN" %}-{% else %}<a href="/notebook/institutions/show/{{inst.institution.pk}}">{{inst.institution.name}}</a>{% endif %}</td><td>{% if inst.pos_text %}{{inst.pos_text}}{% else %}{{inst.get_kind_display}}{% endif %}</td><td>{{inst.time}}</td><td><a href="{{inst.institution.url}}" target="_blank">{{inst.institution.url}}</a></td></tr>{% endfor %}
+</table>
+</div>
+{% endif %}
+{% if people %}
+<hr>
+<div class="inst_peop_info">
+<h5>Connections to other people</h5>
+<table class="table table-hover">
+<thead><tr><th>Name</th><th>Kind</th><th>Period</th></tr></thead>
+{% for pp in people %}<tr><td><a href="/notebook/people/show/{{pp.person2.pk}}">{{pp.person2.last_name}},&nbsp;{{pp.person2.first_name}}</a></td><td>{{pp.get_kind_display}}</td><td>{{pp.time}}</td></tr>{% endfor %}
+</table>
+</div>
+{% endif %}
+{% if sec_sources or person.sec_sources_raw %}
+<hr>
+<h5>Secondary sources on {{ person.first_name }} {{person.last_name}}</h5>
+{% if sec_sources and person.sec_sources_raw %}
+<button type="button" id="toggle_btn" class="btn btn-primary btn-xs" onclick="$('#sec_source_1').toggle();$('#sec_source_2').toggle();$('#toggle_btn').text(function(i, text){
+          return text === 'Show raw text' ? 'Show parsed entries' : 'Show raw text';
+      })">Show raw text</button>&nbsp;<a href="#" class="tooltip_1" title="Secondary resources can be entered in plain text. As automatic parsing is not working 100% you can toggle between viewing the raw text entered and the parsed database entries." style="margin-bottom:15px;"><img class="inline_icon2" src="{{ STATIC_URL }}icons/info_blue_64.png" style="margin-bottom:15px;"></a>
+{% endif %}
+{% if sec_sources %}
+<div id="sec_source_1" class="peop_sec_source">
+<table class="table table-hover">
+<thead><tr><th>Title</th><th>Authors</th><th>Date of publication</th><th>Place of publication</th></tr></thead>
+{% for art in sec_sources %}<tr><td><a href="/notebook/texts/show/{{art.text.pk}}">{{art.text.title}}</a></td><td>{% for aut in art.authors %}<a href="/notebook/people/show/{{aut.pk}}">{{ aut.first_name }}&nbsp;{{ aut.last_name }}</a>{% if not forloop.last %},&nbsp;{% endif %}{% endfor %}</td><td>{{art.texts.pubdate}}</td><td>{{art.text.p_place.place}}</td></tr>{% endfor %}
+</table>
+</div>
+{% endif %}
+{% if person.sec_sources_raw and sec_sources %}
+<div id="sec_source_2" class="peop_sec_source" style="display: none;">
+	<p>{{ person.sec_sources_raw }}</p>
+</div>
+{% elif person.sec_sources_raw %}
+<div id="sec_source_2" class="peop_sec_source">
+	<p>{{ person.sec_sources_raw }}</p>
+</div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}
+
+{% if graph %}
+{% block rightbar %}
+
+	<div id="container_graph">
+	</div>
+
+
+	<script type="text/javascript">
+	$.ajax({
+url : "/notebook/people/show/ajax/",
+type : "POST",
+dataType: "json",
+data : {
+client_response : {{person.pk}},
+csrfmiddlewaretoken: '{{ csrf_token }}'
+},
+success : function(graph) {
+
+	sigma.renderers.def = sigma.renderers.canvas
+	
+	//var u = {{graph|safe}};
+	//console.log(u)
+	var s = new sigma({graph: graph,
+		container:'container_graph',
+		settings: {
+    drawEdges: true,
+    sideMargin: 1
+    //autoRescale: false
+  }});
+	//s.graph.read(u);
+	//console.log(s.graph.nodes().length)
+	s.graph.nodes().forEach(function(n) {
+		n.size=s.graph.degree(n.id)
+		//n.color="#319"
+		//console.log(n)
+	});
+	s.refresh()
+
+	s.startForceAtlas2();
+	setTimeout(function(){s.stopForceAtlas2()},1000);
+	//sigma.plugins.dragNodes(s, s.renderers[0]);
+}})
+
+
+
+	
+	
+
+	</script>
+{% endblock %}
+
+{% endif %}

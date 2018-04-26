@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <title>{% block title %}Aarhus notebook__beta{% endblock %}</title>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery.contextMenu.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery.formset.js?1"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery.contextMenu.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery.ui.position.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery.highlight.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery.tablesorter.js"></script>
+  <script src="{{ STATIC_URL }}sigma/sigma.min.js"></script>
+  <script src="{{ STATIC_URL }}sigma/plugins/sigma.parsers.json.min.js"></script>
+  <script src="{{ STATIC_URL }}sigma/plugins/sigma.layout.forceAtlas2.min.js"></script>
+  <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="{{ STATIC_URL }}tablesorter_blue/style.css?2" />
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="{{ STATIC_URL }}style_user.css?34" />
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+  {% include 'autocomplete_light/static.html' %}
+
+<script type="text/javascript">
+  $(function() {
+    $('.Formset1').formset({
+      prefix: '{{ formset1.prefix }}',
+      formCssClass: 'dynamic-formset1'
+    });
+  })
+</script>
+<script type="text/javascript">
+  $(function() {
+    $('.Formset2').formset({
+      prefix: '{{ formset2.prefix }}',
+      formCssClass: 'dynamic-formset2'
+    });
+  })
+  
+</script>
+<script type="text/javascript">
+$(function() {
+    $( '.tooltip_1' ).tooltip();
+    $( '.tooltip_2' ).tooltip();
+  });
+</script>
+<script type="text/javascript">
+function setGetParameter(paramName, paramValue, url1)
+{
+    var url = url1;
+    if (url.indexOf(paramName + "=") >= 0)
+    {
+        var prefix = url.substring(0, url.indexOf(paramName));
+        var suffix = url.substring(url.indexOf(paramName));
+        suffix = suffix.substring(suffix.indexOf("=") + 1);
+        suffix = (suffix.indexOf("&") >= 0) ? suffix.substring(suffix.indexOf("&")) : "";
+        url = prefix + paramName + "=" + paramValue + suffix;
+    }
+    else
+    {
+    if (url.indexOf("?") < 0)
+        url += "?" + paramName + "=" + paramValue;
+    else
+        url += "&" + paramName + "=" + paramValue;
+    }
+    return url;
+}
+</script>
+<script type="text/javascript">
+    function gotopage2(q){var a =$('#pageToGo').val();var b = a.toString();var z = setGetParameter('page',b,window.location.href);if (q != false){var z = setGetParameter('q',q,z);};window.location.href=z}
+</script>
+<script type="text/javascript">
+function trigger_follow(kind,id){
+$.ajax({
+      url: '/notebook/followAjax/',
+      type: 'POST',
+      dataType: 'json',
+      data: {
+        kind:kind,
+        id:id,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function(res2) {
+        if (res2.follow) {
+          $('#triggerFollow').switchClass('btn-primary','btn-danger');
+          $('#triggerFollow').html('Unfollow');
+        } else {
+          $('#triggerFollow').switchClass('btn-danger','btn-primary');
+          $('#triggerFollow').html('Follow');
+      }
+    }
+})}
+</script>
+</head>
+
+<body>
+<div id="container">
+    <div id="header"><a href="http://aarhus.schloegl.net/"><h1>Aarhus Notebook__beta</h1></a>
+    </div>
+    <div id="sidebar">
+        {% block sidebar %}
+        <h5>Menu</h5>
+        <ul>
+            <li><a href="/notebook/texts/add">Add Text</a></li>
+            <li><a href="/notebook/texts/search/crossrefs">Search CrossRef</a> <a href="#" class="tooltip_2" title="CrossRef is an association of scholarly publishers that today covers over 71 million journal articles and other content items (books chapters, data, theses, technical reports) from thousands of scholarly and professional publishers around the globe. You can search the database and import records to the tool with one click."><img class="inline_icon2" src="{{ STATIC_URL }}icons/info_blue_64.png"></a></li>
+            <li><a href="/notebook/texts/list">List Texts</a></li>
+            <li><a href="/notebook/people/list">List People</a></li>
+            <li><a href="/notebook/concepts/list">List Concepts</a></li>
+            <li><a href="/notebook/terms/list">List Terms</a></li>
+            <li><a href="/notebook/institutions/list/">List Institutions</a></li>
+            <li><a href="/notebook/sec_sources/list/">List secondary sources</a> <a href="#" class="tooltip_1" title="Secondary sources are 'normal' text entries but in the analysis treated differently from 'normal' texts. You can either mark text entries as secondary sources in the form or use the secondary sources fields in the people and institutions forms."><img class="inline_icon2" src="{{ STATIC_URL }}icons/info_blue_64.png"></a></li>
+            <li><a href="/notebook/people/add">Add Person</a></li>
+            <li><a href="/notebook/institutions/add/">Add Institution</a></li>
+        </ul>
+        <h5>Review needed <a href="#" class="tooltip_1" title="When people or institutions are created through another form (e.g. you add a text) most information is missing. Therefore they are marked as 'need review' and stored in the lists beneath."><img class="inline_icon" src="{{ STATIC_URL }}icons/info_blue_64.png"></a></h5>
+        <ul>
+            <li><a href="/notebook/sec_sources/list/review">List secondary sources</a></li>
+            <li><a href="/notebook/people/list/review">List People</a></li>
+            <li><a href="/notebook/institutions/list/review">List Institutions</a></li>
+        </ul>
+        <h5>Analysis <a href="#" class="tooltip_1" title="Please note that we are testing the analysis part at the moment. Therefore it is only possible to choose people and the only connection shown in the analysis is that between two persons (e.g. Mentor). We will soon add more possibilities."><img class="inline_icon" src="{{ STATIC_URL }}icons/info_blue_64.png"></a></h5>
+        <ul>
+          <li><a href="/notebook/people/choose">Choose people</a> <a href="#" class="tooltip_1" title="Use this link to define an analysis set. At the moment this is only possible for people."><img class="inline_icon2" src="{{ STATIC_URL }}icons/info_blue_64.png"></a></li>
+          <li><a href="/notebook/analysis/networks">Analysis</a> <a href="#" class="tooltip_1" title="The analysis section is showing networks of analysis sets you have defined before."><img class="inline_icon2" src="{{ STATIC_URL }}icons/info_blue_64.png"></a></li>
+        </ul>
+        <br />
+        <ul>
+            <li><a class="second_link" href="/notebook/report/add">Suggestions/Bugs</a></li>
+        </ul>
+        {% endblock %}
+    </div>
+    <div id="rightbar">
+        {% block rightbar %}{% endblock %}
+    </div>
+
+    <div id="content" class=".container">
+        {% block content %}{% endblock %}
+    </div>
+    </div>
+</body>
+</html>

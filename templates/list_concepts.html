@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>List of concepts</h3>
+<input type="text" class="form-control" id="live_search" placeholder="Start typing to filter the list">
+<hr>
+<div class="list_1">
+<table id="list_2" class="tablesorter table table-hover">
+<thead>
+	<tr><th>Name</th><th>Period</th><th>Number of texts</th><th>Number of terms</th></tr>
+</thead>
+<tbody>
+
+	{% for conc in concepts %}
+	{% with terms=conc.terms.all %}<tr class="deletable"><td><a href="{{ BASE_URL }}/notebook/concepts/show/{{conc.pk}}">{{conc.name}}</a></td><td>{{conc.period}}</td><td>{{conc.num_text}}</td><td>{{terms|length}}</td></tr>{% endwith %}{% endfor %}
+
+</tbody>
+</table>	
+</div>
+<script type="text/javascript">
+	
+	$(document).ready(function () {
+/* initially hide list items */
+$("#list_2").tablesorter();
+
+/* filter dinosaurs as you type */
+$("#live_search").on("keyup click input", function () {
+if (this.value.length > 0) {
+  $("#list_2 tr.deletable").hide().filter(function () {
+    return $(this).text().toLowerCase().indexOf($("#live_search").val().toLowerCase()) != -1;
+  }).show();
+}
+else {
+  $("#list_2 tr.deletable").show();
+}
+});
+
+});
+
+</script>
+
+{% endblock %}

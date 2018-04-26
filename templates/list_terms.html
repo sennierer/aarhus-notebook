@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>List of terms</h3>
+<input type="text" class="form-control" id="live_search" placeholder="Start typing to filter the list">
+<hr>
+<div class="list_1">
+<table id="list_2" class="tablesorter table table-hover">
+<thead>
+	<tr><th>Term</th><th>English</th><th>Number of concepts</th></tr>
+</thead>
+<tbody>
+
+	{% for term in terms %}
+	<tr class="deletable"><td><a href="{{ BASE_URL }}/notebook/terms/show/{{term.pk}}">{{term.name}}</a></td><td>{{term.english}}</td><td>{{term.numconc}}</td></tr>{% endfor %}
+
+</tbody>
+</table>	
+</div>
+<script type="text/javascript">
+	
+	$(document).ready(function () {
+/* initially hide list items */
+$("#list_2").tablesorter();
+
+/* filter dinosaurs as you type */
+$("#live_search").on("keyup click input", function () {
+if (this.value.length > 0) {
+  $("#list_2 tr.deletable").hide().filter(function () {
+    return $(this).text().toLowerCase().indexOf($("#live_search").val().toLowerCase()) != -1;
+  }).show();
+}
+else {
+  $("#list_2 tr.deletable").show();
+}
+});
+
+});
+
+</script>
+
+{% endblock %}

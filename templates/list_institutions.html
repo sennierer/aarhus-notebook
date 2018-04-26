@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>List of Institutions</h3>
+<input type="text" class="form-control" id="live_search" placeholder="Start typing to filter the list">
+<hr>
+<div class="list_1">
+<table id="list_2" class="tablesorter table table-hover">
+<thead>
+<tr><th>Name</th><th>Kind</th><th>URL</th><th>Address</th></tr>
+</thead>
+<tbody>
+	{% for inst in institutions %}<tr class="deletable"><td class="name_column_inst"><a href="{{ BASE_URL }}/notebook/institutions/show/{{inst.pk}}">{{inst.name}}</a></td><td>{{inst.get_kind_display}}</td><td>{% if inst.url %}<a href="{{inst.url}}">{{inst.url}}</a>{% endif %}</td><td class="address_column">{% if inst.address %}{{inst.address}}{% endif %}</td></tr>{% endfor %}
+</tbody>
+</table>
+</div>
+
+<script type="text/javascript">
+	
+	$(document).ready(function () {
+/* initially hide list items */
+$("#list_2").tablesorter();
+
+/* filter dinosaurs as you type */
+$("#live_search").on("keyup click input", function () {
+if (this.value.length > 0) {
+  $("#list_2 tr.deletable").hide().filter(function () {
+    return $(this).text().toLowerCase().indexOf($("#live_search").val().toLowerCase()) != -1;
+  }).show();
+}
+else {
+  $("#list_2 tr.deletable").show();
+}
+});
+
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <title>{% block title %}Aarhus notebook__beta{% endblock %}</title>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery.contextMenu.css" />
+    <script src="{{ STATIC_URL }}jquery-2.1.1.min.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery.formset.js?1"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery.contextMenu.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery.ui.position.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery.highlight.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery.tablesorter.js"></script>
+  <script src="{{ STATIC_URL }}sigma/sigma.min.js"></script>
+  <script src="{{ STATIC_URL }}sigma/plugins/sigma.parsers.json.min.js"></script>
+  <script src="{{ STATIC_URL }}sigma/plugins/sigma.layout.forceAtlas2.min.js"></script>
+  <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="{{ STATIC_URL }}tablesorter_blue/style.css?2" />
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="{{ STATIC_URL }}style_user.css?26" />
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+  {% include 'autocomplete_light/static.html' %}
+
+<script type="text/javascript">
+$(function() {
+    $( '.tooltip_1' ).tooltip();
+  });
+</script>
+
+</head>
+
+<body>
+<div id="container">
+    <div id="header"><a href="http://aarhus.schloegl.net/"><h1>Aarhus Notebook__beta</h1></a>
+    </div>
+    <div id="top_menu">
+        {% block top_menu %}
+        <a class="top_menu_entry" href="/notebook/texts/add">Add Text</a><span class="delimiter_menu">|</span><a class="top_menu_entry" href="/notebook/texts/list">List Texts</a><span class="delimiter_menu">|</span><a class="top_menu_entry" href="/notebook/people/list">List People</a>
+        {% endblock %}
+    </div>
+
+    <div id="top_menu2"><a class="top_menu_entry_2" href="/notebook/people/choose">Choose people</a></div>
+
+    <div id="content_big" class=".container_big">
+        {% block content %}{% endblock %}
+    </div>
+    </div>
+</body>
+</html>

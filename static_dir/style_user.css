@@ -1,0 +1,208 @@
+
+
+#container {
+	width: 900px;
+	margin-left: auto ;
+	margin-right: auto ;
+}
+
+
+
+#sidebar {
+	width:15em;
+	float:left;
+}
+
+#content{
+	margin-left: 20em;
+	margin-right: 21em;
+}
+
+#header {
+	min-height: 40px;
+	width: 100%;
+}
+
+#sidebar ul {
+	list-style-type: none;
+}
+
+#sidebar label {
+    display: inline-block;
+    width: 5em;
+  }
+
+#header h1 {
+	font-family: Arial;
+	font-size: 30pt;
+	color: grey;
+}
+
+
+#rightbar {
+	width: 20em;
+	float:right;
+}
+
+
+
+#text .hlT_term {
+	background-color: #FFFF00;
+}
+
+#text .hlT_institution {
+	background-color: #FF5C33;
+}
+
+#text {
+	max-height: 800px;
+	overflow: auto;
+	width: 600px;
+	margin-bottom: 15px;
+	margin-top: 15px;
+}
+
+.SemFields {
+	background-color: rgba(45, 132, 208, 0.7);
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding: 10px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.name_sem_field {
+	text-decoration: underline;
+	font-size: 18pt;
+	margin-bottom:20px;
+}
+
+.termsTform2 .form-group {
+	max-width: 160px;
+	float: left;
+
+}
+
+.termsTform {
+	max-width: 150px;
+	margin-right: 5px;
+	float: left;
+}
+
+.termsTformr {
+	max-width: 150px;	
+	float: right;
+}
+
+.btn {
+	margin-bottom: 15px;
+}
+
+#edit_text{
+	margin-right: 5px;
+}
+
+#container_graph {
+	width: 300px;
+	height: 400px;
+}
+
+a.second_link  {
+	color: #bababa;
+}
+
+.user_report_table {
+	min-width: 600px;
+}
+
+.list_1 {
+	min-width: 600px;
+}
+
+.list_1 td.name_column {
+	width: 100px;
+}
+
+.list_1 td.name_column_inst {
+	width: 150px;
+}
+
+.list_1 td.address_column {
+	width: 150px;
+}
+
+img.inline_icon {
+	width: 10%;
+	height: auto;
+}
+
+img.inline_icon2 {
+	width: 8%;
+	height: auto;
+}
+
+#map_address {
+	width: 350px;
+	height: 350px;
+	margin-left: 15px;
+}
+
+#container_graph_big {
+	width: 900px;
+	height: 800px;
+}
+
+.top_menu_entry {
+	margin-top: 5px;
+	margin-bottom: 8px;
+}
+
+.top_menu_entry_2 {
+	color: #ADC2FF;
+}
+
+.delimiter_menu {
+	margin-right: 5px;
+	margin-left: 5px;
+}
+
+#sel_network {
+	width: 200px;
+}
+
+#id_search {
+	
+}
+
+.search_btn {
+	
+}
+
+.pagination {
+	width:50%;
+	float:left;
+}
+
+div#pageform.form-inline {
+	width:40%;
+	float:left;
+	margin-top: 13px;
+	margin-bottom: 13px;
+}
+
+input#pageToGo {
+	width:50px;
+}
+
+#container_big {
+	min-width: 600px;
+}
+
+#inp_group_goToPage {
+	margin-bottom: 15px;
+}
+
+label .tooltip_2  {
+	display: inline-block;
+	max-height: 15px;
+}

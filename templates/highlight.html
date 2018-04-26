@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a class="btn btn-default" href="/notebook/texts/translate/{{id_text}}/">Translate terms</a>
+
+{% if txt == 'PDF' %}
+ <div id="pdf">
+  <object width="700" height="900" type="application/pdf" data="/media/{{pdf}}" id="pdf_content">
+    <p>No pdf found.</p>
+  </object>
+</div>
+{% endif %}
+<div class="context-menu-one text" id="text">{{txt|safe}}</div>
+<hr>
+<div id="form_sem_field">
+    {% load crispy_forms_tags %}
+{% crispy form form.helper %}
+</div>
+{% if sems %}
+<hr>
+<h3>Concepts</h3>
+<div id="semantic_fields">
+    
+    {% for x in sems %}
+    <div class="SemFields sem_field_{{x.id}}"><span class="name_sem_field">{{x.name}}</span>
+    <form method="POST" id="form_term_{{x.id}}" action="/notebook/term/add/">
+    {% crispy form2 form2.helper %}
+    <input hidden name="id_sem_field" value="{{x.id}}">
+    <input hidden name="id_text" value="{{id_text}}">
+     <input type="submit" name="submit" value="Submit" class="btn" id="submit-save">
+     </form>
+     {% if x.terms_in %}
+     <hr>
+    
+    {% for o in x.terms_in %}
+    <div class="term_object">{{o.term.name}}</div>
+    {% endfor %}
+    {% endif %}
+    {% if x.terms_extra %}
+    <hr>
+    <h4>Terms used in other texts</h4>
+    {% for o in x.terms_extra %}
+    <div class="term_object">{{o.term.name}}&nbsp;-&nbsp;{% for r in o.texts.all %}{% if forloop.last %}<a href="/notebook/texts/show/{{r.pk}}">{{r.title}}</a>{% else %}<a href="/notebook/texts/show/{{r.pk}}">{{r.title}}</a>,&nbsp;{% endif %}{% endfor %}</div>{% endfor %}{% endif %}
+    
+    </div>
+    {% endfor %}
+    </div>
+    {% endif %}
+
+<script type="text/javascript">
+
+
+if(!window.Kolich){
+  Kolich = {};
+}
+
+Kolich.Selector = {};
+Kolich.Selector.getSelected = function(){
+  var t = '';
+  if(window.getSelection){
+    t = window.getSelection();
+  }else if(document.getSelection){
+    t = document.getSelection();
+  }else if(document.selection){
+    t = document.selection.createRange().text;
+  }
+  return t;
+}
+
+Kolich.Selector.mouseup = function(){
+  var st = Kolich.Selector.getSelected();
+  if(st!=''){
+    $.getJSON('/notebook/texts/highlight_ajax/', {term: st}, function(data, jqXHR){
+    	//alert("You selected:\n"+data);
+    	//$('.context-menu-one').contextMenu();
+    // do something with response
+});
+  }
+};
+var st = Kolich.Selector.getSelected();
+$(function(){
+    // some build handler to call asynchronously
+    function createSomeMenu() {
+    	
+    	//alert(st);
+    	var xx ="texts";
+        return {
+            callback: function(key, options) {
+                //var m = "clicked: " + key;
+                //window.console && console.log(m) || alert(m);
+                $.getJSON('/notebook/texts/highlight_ajax/', {term:st,save:key,text:{{id_text}}}, function(data, jqXHR){
+    	//alert("You selected:\n"+data[1]);
+        hlw = 'term';
+        if (key == 'institution'){hlw = 'institution'}
+            else if (key == 'person'){hlw = 'person'}
+                else {$('.sem_field_'+data[1]).append('<div class="term_object">'+st+'</div>')};
+    	$('#text').highlight(String(st),{className: "hlSf_"+String(key)+" hlID_"+data[3]+" hlT_"+hlw+" highl_word hl_"+String($('.highl_word').length)});
+    	//$('.context-menu-one').contextMenu();
+    // do something with response
+});
+            },
+            className:'context-menu-one_2',
+            items: {
+            	"Title": {name: String(st), className:'not-selectable context-menu-title'},
+                "institution": {name: "Save as institution"},
+                "person": {name: "Save as person"},
+                {% for zz in sems %}
+                "{{zz.id}}": {name: "Save as SF {{zz.name}}"},
+                {% endfor %}
+            }
+        };
+    }
+
+    // some asynchronous click handler
+ 
+    $('.context-menu-one').on('mouseup', function(e){
+        var $this = $(this);
+        
+        //alert(st);
+        // store a callback on the trigger
+        $this.data('runCallbackThingie', createSomeMenu);
+        var _offset = $this.offset(),
+            position = {
+                //x: _offset.left + 10, 
+                //y: _offset.top + 10
+                x: e.pageX + 10,
+                y: e.pageY +10,
+            }
+        // open the contextMenu asynchronously
+        if(st!=''){
+        setTimeout(function(){ $this.contextMenu(position); }, 200);};
+    });
+
+    // setup context menu
+    $.contextMenu({
+        selector: '.context-menu-one',
+        trigger: 'none',
+        build: function($trigger, e) {
+            // pull a callback from the trigger
+            return $trigger.data('runCallbackThingie')();
+        }
+    });
+});
+
+$(function(){
+    $.contextMenu({
+        selector: '.highl_word', 
+        callback: function(key, options) {
+            //var m = "clicked: " + key;
+            var mm = this.attr('class').match(/\bhl_(\d+)\b/);
+            var term_id = this.attr('class').match(/\bhlID_(\d+)\b/);
+
+            //window.console && console.log(term_id) || alert(term_id);
+            if (key=='delete') {
+            $('#text').unhighlight({className:mm[0]});
+            $.getJSON('/notebook/texts/highlight_ajax/', {term:st,save:key,text:{{id_text}},term_id:term_id[1]}, function(data, jqXHR){
+
+            })
+
+            
+        }
+
+        },
+        items: {
+        	"Title": {name: String(st), className:'not-selectable context-menu-title'},
+            "delete": {name: "Delete", icon: "delete"},
+            "sep1": "---------",
+            "quit": {name: "Quit", icon: "quit"}
+        }
+    });
+    
+   
+});
+
+
+$(document).ready(function(){
+  //$('#text').bind("mouseup", Kolich.Selector.mouseup);
+  //$('#text').bind("mouseup",$('.context-menu-one').contextMenu());
+});
+</script>
+
+{% endblock %}

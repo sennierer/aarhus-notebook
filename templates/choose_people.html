@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Choose People to add to the analysis set</h3>
+<input type="text" class="form-control" id="analysis_class" onkeyup="analysisName()" placeholder="Put a name for the class here.">
+<p class="help-block">To define an analysis set you need to specify a name. As soon as you start typing the tool searches for an already existing set and loads it if available. If you have specified a name and include a person by checking the include box the set is saved.</p><p class="help-block">Analysis sets are user specific, whatever you save here is only available to you. Therefore it is possible that another user has a set with the same name, but completely different people included.</p>
+<hr>
+<input type="text" class="form-control" id="live_search" placeholder="Start typing to filter the list">
+<hr>
+<div class="list_1">
+<table id="list_2" class="tablesorter table table-hover">
+<thead>
+<tr><th>Include</th><th>Name</th><th>Citizenship</th><th>Profession</th><th>Date of birth</th><th>Date of death</th></tr>
+</thead>
+<tbody>
+	{% for peop in people %}<tr class="deletable"><td><input class="chb_people" id="pk_{{peop.pk}}" type="checkbox" onclick="addAnalysis(this)"></td><td class="name_column"><a href="{{ BASE_URL }}/notebook/people/show/{{peop.pk}}">{{peop.first_name}}&nbsp;{{peop.last_name}}</a></td><td>{% if peop.citizenship %}{{peop.citizenship}}{% endif %}</td><td>{% if peop.profession %}{{peop.profession}}{% endif %}</td><td>{% if peop.birth %}{{peop.birth|date:"Y-m-d"}}{% endif %}</td><td>{% if peop.death %}{{peop.death|date:"Y-m-d"}}{% endif %}</td></tr>{% endfor %}
+</tbody>
+</table>
+</div>
+<script type="text/javascript">
+	
+	$(document).ready(function () {
+/* initially hide list items */
+$("#list_2").tablesorter(); 
+
+/* filter dinosaurs as you type */
+$("#live_search").on("keyup click input", function () {
+if (this.value.length > 0) {
+  $("#list_2 tr.deletable").hide().filter(function () {
+    return $(this).text().toLowerCase().indexOf($("#live_search").val().toLowerCase()) != -1;
+  }).show();
+}
+else {
+  $("#list_2 tr.deletable").show();
+}
+});
+
+});
+
+</script>
+<script type="text/javascript">
+function addAnalysis(pk_id) {
+	var anal_class = $('#analysis_class').val();
+	$.ajax({
+		url:'/notebook/analysis/class_ajax/',
+		type: 'POST',
+		dataType: 'json',
+		data: {
+			checked:pk_id.checked,
+			pk_id:pk_id.id,
+			analysis_name:anal_class,
+			analysis_type:'person',
+			csrfmiddlewaretoken: '{{ csrf_token }}'
+		},
+		success : function(mes) {
+			if (mes.mes==2){
+				alert("You need to specify a class-name.");
+				$('#'+mes.pk).attr('checked', false);
+			}
+		}
+	}
+
+		)
+};
+
+</script>
+<script type="text/javascript">
+function analysisName() {
+	var anal_name = $("#analysis_class").val();
+	$('.chb_people').prop('checked',false);
+	$.ajax({
+		url:'/notebook/analysis/name_ajax/',
+		type: 'POST',
+		dataType: 'json',
+		data: {
+			name: anal_name,
+			analysis_type:'person',
+			csrfmiddlewaretoken: '{{ csrf_token }}'
+		},
+		success : function(res) {
+			if (res.test == true){
+			for (var i = 0; i < res.res.length; i++) {
+				console.log(res.res[i]);
+				$('#pk_'+res.res[i]).prop('checked',true);}
+			}
+		}
+	})
+}
+</script>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>{{title}}</h3>
+<input type="text" class="form-control" id="live_search" placeholder="Start typing to filter the list">
+<hr>
+<div class="list_1">
+<table id="list_2" class="tablesorter table table-hover">
+<thead>
+	<tr><th>Title</th><th>Kind</th><th>Language</th><th>Authors</th><th>Date of publication</th></tr>
+</thead>
+<tbody>
+	{% for txt in texts %}<tr class="deletable"><td><a href="{{ BASE_URL }}/notebook/texts/show/{{txt.pk}}">{{txt.title}}</a></td><td>{{txt.get_kind_display}}</td><td>{{txt.get_language_display}}</td><td>{{txt.authors|join:", "}}</td><td>{{txt.pubdate|date:"Y-m-d"}}</td></tr>{% endfor %}
+</tbody>
+</table>	
+</div>
+<script type="text/javascript">
+	
+	$(document).ready(function () {
+/* initially hide list items */
+$("#list_2").tablesorter();
+
+/* filter dinosaurs as you type */
+$("#live_search").on("keyup click input", function () {
+if (this.value.length > 0) {
+  $("#list_2 tr.deletable").hide().filter(function () {
+    return $(this).text().toLowerCase().indexOf($("#live_search").val().toLowerCase()) != -1;
+  }).show();
+}
+else {
+  $("#list_2 tr.deletable").show();
+}
+});
+
+});
+
+</script>
+
+{% endblock %}

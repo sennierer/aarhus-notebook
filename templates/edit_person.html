@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if errors1 or errors2 or form.errors %}
+        <p style="color: red;">
+            Please correct the error{{ errors|pluralize }} below.
+        </p>
+    {% endif %}
+
+<form id="form1" enctype="multipart/form-data" method="POST">
+	{% load crispy_forms_tags %}
+    <div id="form4">
+    {% crispy form4 form4.helper %}
+    </div>
+	<div id="Form">
+	{% crispy form form.helper %}
+	</div>
+<hr>
+<div id="career_div">
+<h4>Information on career</h4>
+{% for form1 in formset1 %}
+<div class="Formset1">
+    {% crispy form1 helper %}
+    </div>
+    {% endfor %}
+    {{ formset1.management_form }}
+    </div>
+<hr>
+<div id="peer_div">
+<h4>Information on peers <a href="#" class="tooltip_1" title="Connections between people are always defined from the person you are actually working on to the 'peer' you enter. E.g. if you choose 'Mentor' as kind of connection the person you are actually working on is/was mentor of the person you enter down below."><img class="inline_icon2" src="{{ STATIC_URL }}icons/info_blue_64.png"></a></h4>
+{% for form2 in formset2 %}
+<div class="Formset2">
+    {% crispy form2 helper %}
+    </div>
+    {% endfor %}
+    {{ formset2.management_form }}
+    </div>
+
+	<div class="form-actions">
+        <input type="submit" name="submit" value="Submit" class="btn btn-primary" id="submit-save">
+	</div>
+	
+</form>
+
+{% endblock %}

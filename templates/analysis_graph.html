@@ -1,0 +1,70 @@
+{% extends "base_2.html" %}
+{% block content %}
+<script type="text/javascript">
+	//sigma.renderers.def = sigma.renderers.canvas
+	
+	
+	function getNetwork(name) {
+		var net = $( "#sel_network option:selected" ).text();
+		$('#container_graph_big').remove();$('<div id="container_graph_big"></div>').insertAfter('#help_hr');
+		$.ajax({
+			url: '/notebook/analysis/networks_ajax/',
+			type: 'POST',
+			dataType: 'json',
+			data: {
+				network:net,
+				csrfmiddlewaretoken: '{{ csrf_token }}'
+			},
+			success: function(graph) {
+				
+				if (graph.mes === true) {
+					//console.log(graph.mes);
+				var s = new sigma({graph: graph.graph,
+					container:'container_graph_big',
+					settings: {
+			    drawEdges: true,
+			    sideMargin: 1
+			    //autoRescale: false
+			  }}
+
+			  );
+				//s.graph.read(u);
+				//console.log(s.graph.nodes().length)
+				s.graph.nodes().forEach(function(n) {
+					n.size=s.graph.degree(n.id)
+					//n.color="#319"
+					//console.log(n)
+				});
+				s.refresh()
+
+				s.startForceAtlas2({
+					strongGravityMode: false
+				});
+				setTimeout(function(){s.stopForceAtlas2()},2000);
+			}}
+		})
+	}
+
+	
+	//sigma.plugins.dragNodes(s, s.renderers[0]);
+
+
+	
+
+	</script>
+<div id='menu_visu'></div>
+<hr>
+<select id="sel_network" onchange="getNetwork(this)" class="form-control">
+<option value="default"></option>
+{% for x in nb4 %}
+<option value="{{x.counter}}">{{x.name}}</option>
+{% endfor %}
+</select>
+<p class="help-block">Choose one of your pre-defined analysis sets. Please keep in mind that at the moment only directly added connections between people (e.g. mentor-mentee) are shown.</p>
+<hr id='help_hr'>
+<div id="container_graph_big">
+	</div>
+
+
+{% endblock %}
+

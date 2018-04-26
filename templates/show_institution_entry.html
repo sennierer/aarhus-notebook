@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if follow %}
+<button type="button" id="triggerFollow" class="btn btn-danger btn-xs" onclick="trigger_follow('institution','{{institution.pk}}')">Unfollow</button>
+{%else%}
+<button type="button" id="triggerFollow" class="btn btn-primary btn-xs" onclick="trigger_follow('institution','{{institution.pk}}')">Follow</button>
+{% endif %}
+<h4>Institution entry</h4>
+<div class="basic_info">
+<table id="Table1" class="table table-hover">
+<tr><td><b>Name</b></td><td>{{institution.name}}</td></tr>
+{% if institution.name_en %}<tr><td><b>English name</b></td><td>{{institution.name_en}}</td></tr>{% endif %}
+{% if institution.kind %}<tr><td><b>Kind</b></td><td>{{institution.get_kind_display}}</td></tr>{% endif %}
+{% if institution.url %}<tr><td><b>Website</b></td><td><a href="{{institution.url}}" target="_blank">{{institution.url}}</a></td></tr>{% endif %}
+{% if institution.twitter %}<tr><td><b>Twitter</b></td><td>{{institution.twitter}}</td></tr>{% endif %}
+{% if institution.address %}<tr><td><b>Address</b></td><td>{{institution.address}}</td></tr>{% endif %}
+</table>
+<a class="btn btn-default" href="/notebook/institutions/edit/{{institution.pk}}">Edit Institution</a>
+</div>
+{% if people %}
+<hr>
+<div class="inst_peop_info">
+<h5>Affiliated people</h5>
+<table id="Table1" class="table table-hover">
+<thead><tr><th>Name</th><th>Position</th><th>Period</th></tr></thead>
+{% for pp in people %}<tr><td><a href="/notebook/people/show/{{pp.people.pk}}">{{pp.people.last_name}},&nbsp;{{pp.people.first_name}}</a></td><td>{% if pp.pos_text %}{{pp.pos_text}}{% else %}{{pp.get_kind_display}}{% endif %}</td><td>{{pp.time}}</td></tr>{% endfor %}
+</table>{% endif %}
+{% endblock %}
+{% block rightbar %}
+{% if institution.address %}
+<script type="text/javascript">
+var geocoder;
+  var map;
+  function initialize_addr_map() {
+    geocoder = new google.maps.Geocoder();
+    var latlng = new google.maps.LatLng(49.267333, 13.886379);
+    var address = "{{institution.address|safe}}";
+    geocoder.geocode( { 'address': address}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK && address.indexOf(',')>-1) {
+    var mapOptions = {
+      zoom: 14,
+      center: results[0].geometry.location,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    map = new google.maps.Map(document.getElementById("map_address"), mapOptions);
+    var marker = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location
+        });
+  } else if (status == google.maps.GeocoderStatus.OK) {
+  	var mapOptions = {
+      zoom: 4,
+      center: results[0].geometry.location,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    map = new google.maps.Map(document.getElementById("map_address"), mapOptions);
+    
+  }
+ else {
+	var mapOptions = {
+      zoom: 3,
+      center: latlng,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    map = new google.maps.Map(document.getElementById("map_address"), mapOptions);
+}
+})}
+
+ </script>
+ <div id="map_address"></div>
+ <script type="text/javascript">initialize_addr_map();</script>
+ {% endif %}
+ {% endblock %}
+ 

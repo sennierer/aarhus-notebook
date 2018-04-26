@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if follow %}
+<button type="button" id="triggerFollow" class="btn btn-danger btn-xs" onclick="trigger_follow('text','{{text.pk}}')">Unfollow</button>
+{%else%}
+<button type="button" id="triggerFollow" class="btn btn-primary btn-xs" onclick="trigger_follow('text','{{text.pk}}')">Follow</button>
+{% endif %}
+<h4>Text entry {% if text.sec_source %}&nbsp;(secondary source){% endif %}</h4>
+
+<table id="Table1" class="table">
+<tr><td><b>Title</b></td><td>{{text.title}}</td></tr>
+{% if authors %}<tr><td><b>Author(s)</b></td><td>{% for aut in authors %}<a href="{{ BASE_URL }}/notebook/people/show/{{aut.pk}}">{{aut.first_name}}&nbsp;{{aut.last_name}}</a>{% if not forloop.last %}&nbsp;/&nbsp;{% endif %}{% endfor %}</td></tr>{% endif %}
+{% if text.title_en %}<tr><td><b>English title</b></td><td>{{text.title_en}}</td></tr>{% endif %}
+{% if text.sub_title %}<tr><td><b>Subtitle</b></td><td>{{text.sub_title}}</td></tr>{% endif %}
+{% if publisher %}<tr><td><b>Publisher</b></td><td>{% for pub in publisher %}<a href="/notebook/institutions/show/{{pub.institution.pk}}">{{pub.institution.name}}{% if pub.institution.name_en %}&nbsp;[{{pub.institution.name_en}}]{% endif %}</a>{% endfor %}</td></tr>{% endif %}
+{% if publ_peop %}<tr><td><b>Publisher(s) (person)</b></td><td>{% for aut in publ_peop %}<a href="{{ BASE_URL }}/notebook/people/show/{{aut.pk}}">{{aut.first_name}}&nbsp;{{aut.last_name}}</a>{% if not forloop.last %}&nbsp;/&nbsp;{% endif %}{% endfor %}</td></tr>{% endif %}
+{% if editors %}<tr><td><b>Editor(s)</b></td><td>{% for aut in editors %}<a href="{{ BASE_URL }}/notebook/people/show/{{aut.pk}}">{{aut.first_name}}&nbsp;{{aut.last_name}}</a>{% if not forloop.last %}&nbsp;/&nbsp;{% endif %}{% endfor %}</td></tr>{% endif %}
+{% if text.volume %}<tr><td><b>Volume</b></td><td>{{text.volume}}</td></tr>{% endif %}
+{% if text.issue %}<tr><td><b>Issue</b></td><td>{{text.issue}}</td></tr>{% endif %}
+{% if text.pubdate %}<tr><td><b>Date of publication</b></td><td>{{text.pubdate}}</td></tr>{% endif %}
+{% if text.p_place %}<tr><td><b>Place of publication</b></td><td>{{text.p_place.place}}</td></tr>{% endif %}
+{% if text.recipient %}<tr><td><b>Recipient</b></td><td>{{text.recipient}}</td></tr>{% endif %}
+{% if keywords %}<tr><td><b>Keywords</b></td><td>{% for kw in keywords %}{{kw.term.name}}{% if not forloop.last %},&nbsp;{% endif %}{% endfor %}</td></tr>{% endif %}
+{% if text.abstract %}<tr><td><b>Abstract</b></td><td>{{text.abstract|linebreaks}}</td></tr>{% endif %}
+
+</table>
+<a id='edit_text' href="/notebook/texts/highlight/{{text.pk}}/" class="btn btn-default">Work on text</a><a id='edit_text_details' href="/notebook/texts/edit/{{text.pk}}/" class="btn btn-default">Edit text entry</a>
+
+
+
+{% endblock %}

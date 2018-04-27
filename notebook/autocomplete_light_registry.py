@@ -1,7 +1,7 @@
 import autocomplete_light
 from django.db.models import Q
 #from py2neo import neo4j
-from models import *
+from .models import *
 
 
 class publisher_text(autocomplete_light.AutocompleteListBase):
@@ -43,7 +43,7 @@ class termsautocomplete(autocomplete_light.AutocompleteListBase):
 		q = self.request.GET.get('q','')
 		q1 = q.split(';')
 		if len(q1)>1:
-			
+
 			term = q1.pop()
 			q2=';'.join(q1)+';'
 		else:

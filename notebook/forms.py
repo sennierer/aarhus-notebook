@@ -4,7 +4,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.core.urlresolvers import reverse
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div
-from models import nb_texts,nb2_peopleInstitution,nb2_peoplePeople,nb_institution,nb_user_report,nb2_peopleTexts,nb4_edit
+from .models import nb_texts,nb2_peopleInstitution,nb2_peoplePeople,nb_institution,nb_user_report,nb2_peopleTexts,nb4_edit
 from django.core.validators import RegexValidator
 from django.utils.translation import ugettext_lazy as _
 
@@ -34,10 +34,10 @@ class form_add_text(forms.Form):
 		self.helper.form_method = 'post'
 		self.helper.form_tag = False
 		self.helper.disable_csrf = True
-		
+
 
 		#elf.helper.add_input(Submit('submit', 'Submit'))
-	
+
 class form_user_login(forms.Form):
 	username = forms.CharField(label='Username',widget=forms.TextInput)
 	password = forms.CharField(label='Password',widget=forms.PasswordInput)
@@ -183,7 +183,7 @@ class form_add_report(forms.ModelForm):
 class form_search_crossrefs(forms.Form):
 	search = forms.CharField(label="Search",help_text="Crossrefs will be searched.")
 	def __init__(self, *args, **kwargs):
-		
+
 		self.helper = FormHelper()
 		self.helper.form_class = 'form-inline'
 		self.helper.field_template = 'bootstrap3/layout/inline_field.html'

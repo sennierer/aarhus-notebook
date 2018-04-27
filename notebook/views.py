@@ -34,11 +34,11 @@ from kitchen.text.converters import to_unicode, to_bytes
 import re
 import os
 import requests
-from parse_xml_2 import parse_citations
+from helper_scripts.parse_xml_2 import parse_citations
 import bibtexparser
 import StringIO
 import math
-from unidecode import unidecode	
+from unidecode import unidecode
 from django.core.mail import send_mail
 from datetime import datetime, timedelta
 
@@ -69,7 +69,7 @@ def send_mails_follow(edit):
 	send_mail('Aarhus notebook edit note - %s'%datetime.now().strftime("%d.%m.%Y %H:%M"), email_text_plain, 'aarhus@schloegl.net',email_addr, fail_silently=False, html_message=email_text)
 
 
-	
+
 
 # Create your views here.
 @login_required(login_url='/login/')
@@ -156,7 +156,7 @@ def add_text(request,id_text=False):
 						file_1.save()
 			if cd['publisher']:
 				m = re.search(r'^([^\[]+)',cd['publisher'])
-				mm = re.search(r'\[([^\]]+)\]',cd['publisher'])	
+				mm = re.search(r'\[([^\]]+)\]',cd['publisher'])
 				if mm:
 					inst,created_pub = nb_institution.objects.get_or_create(name=m.group(1).strip(),name_en=mm.group(1).strip())
 					#inst.name_en = mm.group(1).strip()
@@ -168,7 +168,7 @@ def add_text(request,id_text=False):
 				#publisher,created_pub = nb_institution.objects.get_or_create(name=cd['publisher'],update=True)
 				con_text_inst=nb2_institutionTexts(institution=inst,texts=text,kind=nb2_institutionTexts.PUB)
 				con_text_inst.save()
-			
+
 			for x in cd_fs1:
 				try:
 					nn = x['name'].split(',')
@@ -325,9 +325,9 @@ def highl(request,txt_id):
 		tt.terms_in = nb3_termTextSemfield.objects.filter(sem_fields=tt,texts=text,kind=nb3_termTextSemfield.TER)
 		#terms_text = nb2_termTexts.objects.filter(text=text2)
 		tt.terms_extra = nb3_termTextSemfield.objects.filter(sem_fields=tt,kind=nb3_termTextSemfield.TER).exclude(texts=text)
-		
 
-		
+
+
 		#terms_3[tt.id]=terms
 		if (txt2 != 'There is no full-text available.') and (txt2!='PDF'):
 			for zz in tt.terms_in:
@@ -395,7 +395,7 @@ def highl_ajax(request):
 		conTermText.sem_fields.add(sem_field)
 		#return HttpResponseRedirect('/notebook/texts/highlight/')
 		#return HttpResponse('success', content_type='application/json')
-		
+
 		test1.append(term2)
 		test1.append(save)
 		test1.append(text2)
@@ -453,7 +453,7 @@ def list_texts(request,secSource=False,update=False):
 		else:
 			texts = nb_texts.objects.filter(sec_source=True)
 			title = 'List of secondary sources'
-	else:	
+	else:
 		texts = nb_texts.objects.filter(sec_source=False)
 		title = 'List of texts'
 	for ind,x in enumerate(texts):
@@ -468,7 +468,7 @@ def list_texts(request,secSource=False,update=False):
 def list_people(request,review=False):
 	if review:
 		people = nb_people.objects.filter(update=True)
-	else:	
+	else:
 		people = nb_people.objects.all()
 	return render(request,'list_people.html',{'people':people})
 
@@ -610,7 +610,7 @@ def analysis_name_ajax(request):
 def list_institutions(request,review=False):
 	if review:
 		inst = nb_institution.objects.filter(update=True).exclude(name="UNKNOWN")
-	else:	
+	else:
 		inst = nb_institution.objects.all().exclude(name="UNKNOWN")
 	return render(request, 'list_institutions.html',{'institutions':inst})
 
@@ -625,9 +625,9 @@ def show_institution(request,id_institution):
 def edit_person(request,id_people=False):
 	errors = []
 	career_formset = formset_factory(form_pers_add_career)
-	
+
 	peers_formset = formset_factory(form_pers_add_peer)
-	
+
 
 	if request.method == 'POST':
 		form4 = form_explain_edit(request.POST)
@@ -668,7 +668,7 @@ def edit_person(request,id_people=False):
 
 					if created:
 						inst.update = True
-					
+
 					inst.save()
 
 					con = nb2_peopleInstitution(people=peop,institution=inst,time=x['time'],kind=x['kind'],pos_text=x['pos_text'])
@@ -722,9 +722,9 @@ def edit_person(request,id_people=False):
 					initial.append({'kind':d.kind,'pos_text':d.pos_text,'inst':'','time':d.time})
 				elif d.institution.name_en:
 					initial.append({'kind':d.kind,'pos_text':d.pos_text,'inst':d.institution.name+'['+d.institution.name_en+']','time':d.time})
-				else:	
+				else:
 					initial.append({'kind':d.kind,'pos_text':d.pos_text,'inst':d.institution.name,'time':d.time})
-				
+
 
 			for i in nb2_peoplePeople.objects.filter(person1=pp):
 				initial2.append({'kind':i.kind,'time':i.time,'pers':i.person2.last_name+', '+i.person2.first_name,'kind_freeT':i.kind_freeT})
@@ -812,14 +812,14 @@ def translate_terms(request,id_text,include_all=False):
 			return render(request,'message.html',{'message':'Saved!','redirect':'/notebook/texts/highlight/'+str(id_text)})
 		else:
 			helper = FormSet2Helper
-			return render_to_response('translate_terms.html',{'text':text,'formset':formset,'helper':helper},context_instance=RequestContext(request))			
+			return render_to_response('translate_terms.html',{'text':text,'formset':formset,'helper':helper},context_instance=RequestContext(request))
 
 	else:
 		text = nb_texts.objects.get(pk=id_text)
 		if include_all:
 			terms = nb3_termTextSemfield.objects.filter(term__translate=True,texts=text)
-			
-		else:	
+
+		else:
 			terms = nb3_termTextSemfield.objects.filter(term__translate=True,term__update=True,texts=text)
 		initial=[]
 		for x in terms:
@@ -880,7 +880,7 @@ def search_crossrefs(request):
 				r['items'][count]['exists']=False
 		except:
 			r['items'][count]['exists']=False
-	
+
 	page = int(page)
 	l_1_low=(int(page)*20)-20
 	l_1_high=int(page)*20
@@ -909,7 +909,7 @@ def search_crossrefs_ajax(request):
 			return HttpResponse(res2,content_type='application/javascript')
 		r.encoding = 'utf8'
 		bibtex2 = r.text.replace(', ',',\n')
-		
+
 		bib_database = bibtexparser.loads(bibtex2)
 		ent = bib_database.entries
 		#res2 = json.dumps({'id':d_id,'bibtex2':ent})

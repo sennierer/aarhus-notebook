@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(os.path.join(__file__,'../'))))
 
 
 # Quick-start development settings - unsuitable for production
@@ -82,13 +82,13 @@ USE_L10N = True
 USE_TZ = True
 
 TEMPLATE_DIRS = (
-    '/var/django/aarhus_2/aarhus/templates',
+    os.path.join(BASE_DIR, 'templates/')
 #	'/Users/senmacbook/CloudStation/Aarhus/Code/aarhus/templates'
     )
 
 STATICFILES_DIRS = (
-	'/var/django/aarhus_2/aarhus/static_dir',
-    '/var/django/aarhus_2/aarhus/templates'
+    os.path.join(BASE_DIR, 'static_dir/'),
+    os.path.join(BASE_DIR, 'templates/')
     #'/Users/senmacbook/CloudStation/Aarhus/Code/aarhus/static',
     #'/Users/senmacbook/CloudStation/Aarhus/Code/aarhus/templates'
     )
@@ -97,9 +97,9 @@ STATICFILES_DIRS = (
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 #MEDIA_ROOT = '/Users/sennierer/CloudStation/Aarhus/Code/aarhus/Media'
-MEDIA_ROOT = '/var/django/aarhus_2/aarhus/Media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 #STATIC_ROOT = '/Users/sennierer/CloudStation/Aarhus/Code/aarhus/static'
-STATIC_ROOT = '/var/django/aarhus_2/aarhus/static'
 MEDIA_URL = '/uploads/'

@@ -84,7 +84,7 @@ USE_TZ = True
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static_dir/'),
-    os.path.join(BASE_DIR, 'templates/')
+    #os.path.join(BASE_DIR, 'templates/')
     #'/Users/senmacbook/CloudStation/Aarhus/Code/aarhus/static',
     #'/Users/senmacbook/CloudStation/Aarhus/Code/aarhus/templates'
     )

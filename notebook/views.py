@@ -36,7 +36,10 @@ import os
 import requests
 from helper_scripts.parse_xml_2 import parse_citations
 import bibtexparser
-import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 import math
 from unidecode import unidecode
 from django.core.mail import send_mail
